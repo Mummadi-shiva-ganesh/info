@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AI Explorers — Founding Edition</title>
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;width:100%;height:100%;font-family:Arial,Helvetica,sans-serif}
+body{background:#080a0f;color:#fff;overflow:hidden}
+button{font:inherit}
+.stage{position:relative;width:100vw;height:100vh;display:flex;align-items:center;justify-content:center;overflow:hidden;perspective:1200px}
+.orb{position:absolute;border-radius:50%;filter:blur(45px);opacity:.28;pointer-events:none}
+.orb.a{width:360px;height:360px;background:#5b35d5;left:-120px;top:-100px}
+.orb.b{width:300px;height:300px;background:#159c91;right:-100px;bottom:-100px}
+.floor{position:absolute;width:180vw;height:70vh;bottom:-42vh;transform:rotateX(70deg);opacity:.15;background-image:linear-gradient(#fff 1px,transparent 1px),linear-gradient(90deg,#fff 1px,transparent 1px);background-size:55px 55px}
+.instruction{position:absolute;top:25px;left:50%;transform:translateX(-50%);z-index:10;color:#9ba3b2;font-size:11px;letter-spacing:2px;text-transform:uppercase;white-space:nowrap}
+.badge-wrap{width:330px;height:470px;position:relative;z-index:3;transform-style:preserve-3d;transition:transform .18s ease;touch-action:none;cursor:grab}
+.badge-wrap:active{cursor:grabbing}
+.lanyard{position:absolute;z-index:1;top:-190px;left:50%;width:165px;height:225px;transform:translateX(-50%);border-left:8px solid #242a34;border-right:8px solid #242a34;border-radius:0 0 95px 95px;box-shadow:inset 2px 0 #777f8b,inset -2px 0 #080a0f}
+.clip{position:absolute;z-index:6;top:25px;left:50%;transform:translateX(-50%);width:30px;height:46px;border-radius:8px;background:linear-gradient(90deg,#777,#f8f8f8,#777);box-shadow:0 5px 12px #000}
+.card{position:absolute;inset:0;border-radius:25px;overflow:hidden;background:#f2e7cc;color:#4a3e29;border:1px solid #fff;box-shadow:24px 32px 55px rgba(0,0,0,.6);transform-style:preserve-3d}
+.card:after{content:"";position:absolute;width:260px;height:90px;left:-70px;top:80px;transform:rotate(-30deg);background:rgba(255,255,255,.32);filter:blur(12px);animation:shine 4s infinite}
+@keyframes shine{0%,35%{left:-250px}65%,100%{left:360px}}
+.content{position:absolute;inset:0;padding:38px 30px;z-index:3;display:flex;flex-direction:column;justify-content:space-between;transform:translateZ(35px)}
+.eyebrow{font-size:10px;font-weight:bold;letter-spacing:2px;color:#8b7448}
+.title{margin-top:22px;font-size:35px;line-height:.94;font-weight:900;letter-spacing:-2px}
+.sub{font-size:9px;letter-spacing:1.3px;color:#806c47;max-width:210px;line-height:1.5}
+.vol{margin-top:7px}
+.line-art{position:absolute;right:-40px;bottom:-30px;width:260px;height:260px;border:2px solid #ae9460;border-radius:50%;opacity:.55}
+.line-art:before,.line-art:after{content:"";position:absolute;border:2px solid #ae9460;border-radius:50%}
+.line-art:before{inset:32px}.line-art:after{inset:68px}
+.line-dot{position:absolute;width:11px;height:11px;border-radius:50%;background:#a38750;right:57px;bottom:112px}
+.turn{position:absolute;bottom:28px;z-index:8;border:1px solid #596170;background:rgba(255,255,255,.08);color:#fff;border-radius:999px;padding:12px 18px;font-size:12px;font-weight:bold;backdrop-filter:blur(8px);cursor:pointer}
+.turn:hover{background:#fff;color:#111}
+.screen2{position:absolute;inset:0;z-index:20;background:#fffaf0;color:#17202b;display:flex;align-items:center;justify-content:center;padding:22px;opacity:0;pointer-events:none;transform:scale(1.04);transition:.55s ease}
+.screen2.show{opacity:1;pointer-events:auto;transform:scale(1)}
+.panel{width:min(470px,100%);padding:30px;background:rgba(255,255,255,.96);border:2px solid #17202b;border-radius:30px;box-shadow:9px 11px #17202b}
+.brand{font-size:20px;font-weight:900;margin-bottom:25px}
+.robot{font-size:58px;margin-bottom:10px}
+h1{font-size:43px;line-height:.93;letter-spacing:-2.5px;margin:0 0 15px}
+.hl{background:#ffd84d;padding:0 7px;border-radius:7px}
+.copy{font-size:15px;line-height:1.55;color:#596474;margin-bottom:21px}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:24px}
+.chip{padding:8px 11px;border:1.5px solid #17202b;border-radius:999px;font-size:12px;font-weight:bold;background:#fff}
+.join{width:100%;border:2px solid #17202b;border-radius:16px;background:#17202b;color:#fff;padding:16px;font-weight:900;box-shadow:5px 5px #ffd84d;cursor:pointer}
+.join:hover{transform:translate(-2px,-2px)}
+.note{text-align:center;color:#7b8490;font-size:11px;margin-top:13px}
+.modal{position:absolute;inset:0;z-index:50;background:rgba(0,0,0,.78);display:none;align-items:center;justify-content:center;padding:18px}
+.modal.open{display:flex}
+.survey{position:relative;width:min(520px,100%);background:#fffaf0;color:#17202b;border:2px solid #17202b;border-radius:28px;padding:22px;box-shadow:8px 9px #17202b}
+.close{position:absolute;right:13px;top:9px;border:0;background:transparent;font-size:27px;cursor:pointer}
+.survey h2{margin:0 0 5px;font-size:27px}.survey p{margin:0 0 17px;color:#667184;font-size:13px}
+.progress{height:8px;border-radius:8px;background:#e5dfd3;overflow:hidden}.bar{height:100%;width:10%;background:#17202b;transition:.25s}
+.deck{height:285px;margin:18px 0;position:relative}.q{position:absolute;inset:0;padding:25px;border:2px solid #17202b;border-radius:23px;background:#fff;box-shadow:6px 7px #8fe3cf;display:flex;flex-direction:column;justify-content:space-between;touch-action:none}
+.tag{font-size:11px;font-weight:900;letter-spacing:1.5px;color:#687386}.question{font-size:26px;line-height:1.08;font-weight:850;letter-spacing:-1px}.hint{font-size:12px;color:#7a8492}
+.actions{display:flex;gap:10px}.action{flex:1;border:2px solid #17202b;border-radius:14px;padding:12px;font-weight:900;cursor:pointer}.no{background:#ffdfe6}.yes{background:#d9f8ee}
+.email{width:100%;padding:13px;border:2px solid #17202b;border-radius:13px;margin:12px 0}.save{width:100%;border:2px solid #17202b;border-radius:13px;padding:13px;background:#17202b;color:#fff;font-weight:900}
+@media(max-width:520px){.badge-wrap{width:285px;height:405px}.title{font-size:30px}.panel h1{font-size:37px}}
+</style>
+</head>
+<body>
+<div class="stage" id="stage">
+  <div class="orb a"></div><div class="orb b"></div><div class="floor"></div>
+  <div class="instruction">Move the badge • drag • turn it over</div>
+  <div class="badge-wrap" id="badge">
+    <div class="lanyard"></div><div class="clip"></div>
+    <div class="card">
+      <div class="content">
+        <div><div class="eyebrow">AI EXPLORERS • FOUNDING EDITION</div><div class="title">THE FUTURE IS<br>CURIOUS.</div></div>
+        <div><div class="sub">A new way for the next generation to understand AI.</div><div class="sub vol">VOL. 01 • 2026</div></div>
+      </div>
+      <div class="line-art"></div><div class="line-dot"></div>
+    </div>
+  </div>
+  <button class="turn" id="turn">Turn the badge over ↻</button>
+
+  <section class="screen2" id="screen2">
+    <div class="panel">
+      <div class="brand">AI Explorers ✦</div>
+      <div class="robot">🤖</div>
+      <h1>AI is the new<br><span class="hl">superpower.</span></h1>
+      <div class="copy">We're creating a fun, practical way for kids to understand AI, create with it, and use it responsibly. Before we build it, we want to hear from parents.</div>
+      <div class="chips"><span class="chip">🧠 Understand AI</span><span class="chip">🎨 Create</span><span class="chip">🛠️ Build</span><span class="chip">🛡️ Safety</span></div>
+      <button class="join" id="join">Join the Founding AI Explorers →</button>
+      <div class="note">60 seconds • Parent/guardian feedback • No spam</div>
+    </div>
+  </section>
+
+  <div class="modal" id="modal">
+    <div class="survey">
+      <button class="close" id="close">×</button>
+      <h2>Help us build it right.</h2>
+      <p>Swipe right 👍 if this matters to your child. Swipe left 👎 if it doesn't.</p>
+      <div class="progress"><div class="bar" id="bar"></div></div>
+      <div class="deck" id="deck"></div>
+      <div class="actions" id="actions"><button class="action no" id="no">← Not for us</button><button class="action yes" id="yes">For us →</button></div>
+    </div>
+  </div>
+</div>
+<script>
+const questions=[
+["AI BASICS","Would your child enjoy learning how AI actually works — not just using ChatGPT?"],
+["AI TOOLS","Would you like your child to learn how to use AI tools for studying and creativity?"],
+["PROJECTS","Would hands-on AI projects and experiments make learning more exciting?"],
+["AI SAFETY","Would you want your child to learn about deepfakes, misinformation, privacy and safe AI use?"],
+["CODING","Would your child be interested in building simple AI projects with little or no coding?"],
+["WORKBOOK","Would you consider buying an interactive AI workbook/eBook if your child enjoyed the free content?"],
+["FORMAT","Would short videos + activities + projects be more useful than a traditional textbook?"],
+["FUTURE","Would you want your child to develop AI skills for future careers?"],
+["COMMUNITY","Would your child enjoy challenges where they can show what they build?"]
+];
+const badge=document.getElementById("badge"),stage=document.getElementById("stage"),screen2=document.getElementById("screen2");
+let dragging=false,startX=0,dx=0,rotation=0;
+stage.addEventListener("pointermove",e=>{
+  if(dragging)return;
+  const x=e.clientX/innerWidth-.5,y=e.clientY/innerHeight-.5;
+  badge.style.transform=`rotateY(${rotation+x*14}deg) rotateX(${-y*10}deg) translateZ(8px)`;
+});
+badge.addEventListener("pointerdown",e=>{dragging=true;startX=e.clientX;badge.setPointerCapture(e.pointerId)});
+badge.addEventListener("pointermove",e=>{
+  if(!dragging)return;
+  dx=e.clientX-startX;
+  badge.style.transform=`translateX(${dx}px) rotateZ(${dx/55}deg) rotateY(${rotation+dx/12}deg)`;
+});
+badge.addEventListener("pointerup",()=>{
+  dragging=false;
+  if(Math.abs(dx)>100)rotation+=dx>0?180:-180;
+  dx=0;badge.style.transform=`rotateY(${rotation}deg)`;
+});
+document.getElementById("turn").onclick=()=>{rotation+=180;badge.style.transform=`rotateY(${rotation}deg)`;setTimeout(()=>screen2.classList.add("show"),420)};
+document.getElementById("join").onclick=()=>{document.getElementById("modal").classList.add("open");startSurvey()};
+document.getElementById("close").onclick=()=>document.getElementById("modal").classList.remove("open");
+let n=0,answers=[];
+function startSurvey(){n=0;answers=[];document.getElementById("actions").style.display="flex";render()}
+function render(){
+  const deck=document.getElementById("deck"),bar=document.getElementById("bar");
+  if(n>=questions.length){finish();return}
+  bar.style.width=((n+1)/questions.length*100)+"%";
+  deck.innerHTML='<div class="q" id="q"><div class="tag">'+questions[n][0]+' • '+(n+1)+'/'+questions.length+'</div><div class="question">'+questions[n][1]+'</div><div class="hint">Swipe right for YES • swipe left for NO</div></div>';
+  const q=document.getElementById("q");let sx=0,move=0;
+  q.onpointerdown=e=>{sx=e.clientX;q.setPointerCapture(e.pointerId)};
+  q.onpointermove=e=>{move=e.clientX-sx;q.style.transform='translateX('+move+'px) rotate('+(move/15)+'deg)'};
+  q.onpointerup=()=>{if(Math.abs(move)>85)vote(move>0);else q.style.transform='';};
+}
+function vote(value){answers.push({topic:questions[n][0],interested:value});n++;render()}
+function finish(){
+  document.getElementById("actions").style.display="none";
+  document.getElementById("deck").innerHTML='<div class="q" style="text-align:center;align-items:center"><div style="font-size:52px">🚀</div><div class="question" style="font-size:24px">You just helped shape AI Explorers.</div><div class="hint">Want early access and the founding-member price?</div><input class="email" id="email" type="email" placeholder="Parent/guardian email"><button class="save" id="save">Join the early-access list</button></div>';
+  document.getElementById("save").onclick=async()=>{
+    const email=document.getElementById("email").value.trim();
+    if(!email||!email.includes("@")){alert("Please enter a valid email.");return}
+    const btn=document.getElementById("save");
+    btn.disabled=true;btn.textContent="Saving...";
+    try{
+      const res=await fetch("https://formspree.io/f/mvkkqgnj",{
+        method:"POST",
+        headers:{"Content-Type":"application/json","Accept":"application/json"},
+        body:JSON.stringify({email})
+      });
+      if(!res.ok)throw new Error();
+      document.getElementById("deck").innerHTML='<div class="q" style="text-align:center;align-items:center;justify-content:center"><div style="font-size:55px">🎉</div><div class="question" style="font-size:24px">You are in!</div><div class="hint">Thanks for helping us build it.</div></div>';
+    }catch(e){
+      btn.disabled=false;btn.textContent="Join the early-access list";
+      alert("Something went wrong. Please try again.");
+    }
+  };
+}
+</script>
+</body>
+</html>
