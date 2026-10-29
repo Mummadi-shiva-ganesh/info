@@ -2,20 +2,20 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>AI Explorers — Founding Edition</title>
 <style>
 *{box-sizing:border-box}
 html,body{margin:0;width:100%;height:100%;font-family:Arial,Helvetica,sans-serif}
 body{background:#080a0f;color:#fff;overflow:hidden}
 button{font:inherit}
-.stage{position:relative;width:100vw;height:100vh;display:flex;align-items:center;justify-content:center;overflow:hidden;perspective:1200px}
+.stage{position:relative;width:100vw;height:100vh;height:100dvh;display:flex;align-items:center;justify-content:center;overflow:hidden;perspective:1200px}
 .orb{position:absolute;border-radius:50%;filter:blur(45px);opacity:.28;pointer-events:none}
 .orb.a{width:360px;height:360px;background:#5b35d5;left:-120px;top:-100px}
 .orb.b{width:300px;height:300px;background:#159c91;right:-100px;bottom:-100px}
 .floor{position:absolute;width:180vw;height:70vh;bottom:-42vh;transform:rotateX(70deg);opacity:.15;background-image:linear-gradient(#fff 1px,transparent 1px),linear-gradient(90deg,#fff 1px,transparent 1px);background-size:55px 55px}
 .instruction{position:absolute;top:25px;left:50%;transform:translateX(-50%);z-index:10;color:#9ba3b2;font-size:11px;letter-spacing:2px;text-transform:uppercase;white-space:nowrap}
-.badge-wrap{width:330px;height:470px;position:relative;z-index:3;transform-style:preserve-3d;transition:transform .18s ease;touch-action:none;cursor:grab}
+.badge-wrap{aspect-ratio:330/470;height:min(470px,calc(100vh - 190px));height:min(470px,calc(100dvh - 190px));margin-bottom:50px;position:relative;z-index:3;transform-style:preserve-3d;transition:transform .18s ease;touch-action:none;cursor:grab}
 .badge-wrap:active{cursor:grabbing}
 .lanyard{position:absolute;z-index:1;top:-190px;left:50%;width:165px;height:225px;transform:translateX(-50%);border-left:8px solid #242a34;border-right:8px solid #242a34;border-radius:0 0 95px 95px;box-shadow:inset 2px 0 #777f8b,inset -2px 0 #080a0f}
 .clip{position:absolute;z-index:6;top:25px;left:50%;transform:translateX(-50%);width:30px;height:46px;border-radius:8px;background:linear-gradient(90deg,#777,#f8f8f8,#777);box-shadow:0 5px 12px #000}
@@ -31,7 +31,8 @@ button{font:inherit}
 .line-art:before,.line-art:after{content:"";position:absolute;border:2px solid #ae9460;border-radius:50%}
 .line-art:before{inset:32px}.line-art:after{inset:68px}
 .line-dot{position:absolute;width:11px;height:11px;border-radius:50%;background:#a38750;right:57px;bottom:112px}
-.turn{position:absolute;bottom:28px;z-index:8;border:1px solid #596170;background:rgba(255,255,255,.08);color:#fff;border-radius:999px;padding:12px 18px;font-size:12px;font-weight:bold;backdrop-filter:blur(8px);cursor:pointer}
+.turn{position:absolute;left:50%;transform:translateX(-50%);bottom:calc(22px + env(safe-area-inset-bottom,0px));white-space:nowrap;z-index:8;border:1px solid #596170;background:rgba(255,255,255,.08);color:#fff;border-radius:999px;padding:12px 18px;font-size:12px;font-weight:bold;backdrop-filter:blur(8px);cursor:pointer}
+.turn{background:rgba(20,24,34,.85)}
 .turn:hover{background:#fff;color:#111}
 .screen2{position:absolute;inset:0;z-index:20;background:#fffaf0;color:#17202b;display:flex;align-items:center;justify-content:center;padding:22px;opacity:0;pointer-events:none;transform:scale(1.04);transition:.55s ease}
 .screen2.show{opacity:1;pointer-events:auto;transform:scale(1)}
@@ -56,7 +57,8 @@ h1{font-size:43px;line-height:.93;letter-spacing:-2.5px;margin:0 0 15px}
 .tag{font-size:11px;font-weight:900;letter-spacing:1.5px;color:#687386}.question{font-size:26px;line-height:1.08;font-weight:850;letter-spacing:-1px}.hint{font-size:12px;color:#7a8492}
 .actions{display:flex;gap:10px}.action{flex:1;border:2px solid #17202b;border-radius:14px;padding:12px;font-weight:900;cursor:pointer}.no{background:#ffdfe6}.yes{background:#d9f8ee}
 .email{width:100%;padding:13px;border:2px solid #17202b;border-radius:13px;margin:12px 0}.save{width:100%;border:2px solid #17202b;border-radius:13px;padding:13px;background:#17202b;color:#fff;font-weight:900}
-@media(max-width:520px){.badge-wrap{width:285px;height:405px}.title{font-size:30px}.panel h1{font-size:37px}}
+@media(max-width:520px){.title{font-size:30px}.panel h1{font-size:37px}}
+@media(max-height:640px){.title{font-size:26px;margin-top:14px}.content{padding:26px 22px}.eyebrow{font-size:8px}.instruction{top:10px}.badge-wrap{height:min(470px,calc(100dvh - 150px))}}
 </style>
 </head>
 <body>
